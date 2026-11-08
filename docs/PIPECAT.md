@@ -49,7 +49,7 @@ Then replace their construction inside `run_bot`:
 +    language="en",
 +    provider="auto",
 +    model="auto",
-+    voice="",                   # catalog/configured default
++    voice="",                   # catalog/configured default; BYOK without one: voice_required
 +    credential_source="auto",  # or "byok" / "managed"
 +)
 ```

@@ -295,6 +295,9 @@ def _error_message(status: int, body: dict[str, Any]) -> str:
             detail += f", provider {provider['code']}"
             if type(provider.get("status")) is int and provider["status"]:
                 detail += f" HTTP {provider['status']}"
+        message = error.get("message")
+        if status == 422 and isinstance(message, str) and message:
+            return f"Gateway rejected request ({detail}): {message}"
         return f"Gateway rejected request ({detail})"
     return f"Gateway rejected request (HTTP {status})"
 

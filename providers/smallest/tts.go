@@ -209,7 +209,7 @@ func validateTTSOptions(model string, options protocol.RequestOptions, media pro
 		// `voice_id` is documented as required and Lightning has no documented
 		// per-model default, so an empty voice is a local error rather than a
 		// billed 4xx.
-		return errors.New("smallest tts requires a voice id in request options")
+		return &protocol.VoiceRequiredError{Provider: "smallest"}
 	}
 	if media.Encoding != "pcm_s16le" {
 		// Lightning's output_format set is pcm/mp3/wav/ulaw/alaw. Opus, the

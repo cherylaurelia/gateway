@@ -228,7 +228,7 @@ func validateGenerationOptions(model string, options protocol.RequestOptions, me
 		return errors.New("cartesia requires a concrete model in the session plan")
 	}
 	if strings.TrimSpace(options.Voice) == "" {
-		return errors.New("cartesia requires a voice id in request options")
+		return &protocol.VoiceRequiredError{Provider: "cartesia"}
 	}
 	if strings.TrimSpace(options.Language) == "" {
 		return errors.New("cartesia requires a language in request options")

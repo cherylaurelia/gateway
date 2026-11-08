@@ -253,6 +253,30 @@ async def test_gateway_admission_error_preserves_code_and_retryability(status, c
             await client.aclose()
 
 
+@pytest.mark.parametrize("code", ["voice_required", "stt_option_unsupported", "tts_option_unsupported"])
+async def test_gateway_refusal_the_caller_must_fix_is_named_and_not_retried(code):
+    from speko_gateway.client import GatewayError
+
+    async def reject(request):
+        return web.json_response({"error": {
+            "code": code,
+            "message": "cartesia requires a voice id: set request.voice",
+        }}, status=422)
+
+    app = web.Application()
+    app.router.add_post("/v1/sessions", reject)
+    async with server(app, unix=True) as socket:
+        client = GatewayClient(socket_path=socket, local_auth_token="fixture")
+        try:
+            with pytest.raises(GatewayError) as caught:
+                await client.open(SessionConfig(kind="tts", execution={}, request={}))
+            assert caught.value.code == code
+            assert caught.value.retryable is False
+            assert "cartesia requires a voice id" in str(caught.value)
+        finally:
+            await client.aclose()
+
+
 @pytest.mark.parametrize("retryable", [False, True])
 async def test_gateway_provider_open_error_details(retryable):
     from speko_gateway.client import GatewayError
