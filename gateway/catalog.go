@@ -32,7 +32,8 @@ type CatalogEntry struct {
 	// REFUSE to open without a voice — Rime and Gradium among them — and
 	// the local planner has no benchmark board to choose from, so without this a
 	// perfectly good adapter fails at open with a vendor error the operator cannot
-	// act on. Empty means the vendor supplies its own default.
+	// act on. Empty means the vendor supplies its own default, or the adapter
+	// refuses at create with voice_required until the operator names one.
 	DefaultVoice string             `json:"default_voice,omitempty"`
 	Transport    protocol.Transport `json:"transport"`
 	Endpoint     string             `json:"endpoint"`

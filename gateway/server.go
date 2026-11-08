@@ -548,6 +548,10 @@ func (s *Server) createSession(writer http.ResponseWriter, request *http.Request
 		if errors.As(err, &ttsOptionError) {
 			outcome = createOutcome{status: http.StatusUnprocessableEntity, code: "tts_option_unsupported", message: ttsOptionError.Error()}
 		}
+		var voiceError *protocol.VoiceRequiredError
+		if errors.As(err, &voiceError) {
+			outcome = createOutcome{status: http.StatusUnprocessableEntity, code: "voice_required", message: voiceError.Error()}
+		}
 		s.finishCreate(idempotencyKey, inflight, outcome)
 		writeCreateOutcome(writer, outcome, false)
 		return

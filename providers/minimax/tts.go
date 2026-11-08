@@ -277,7 +277,7 @@ func validateGenerationOptions(model, voice string, media protocol.MediaFormat) 
 		return fmt.Errorf("minimax does not support model %q", model)
 	}
 	if strings.TrimSpace(voice) == "" {
-		return errors.New("minimax requires a voice id in request options")
+		return &protocol.VoiceRequiredError{Provider: "minimax"}
 	}
 	// audio_setting.format is "pcm", which MiniMax documents as raw signed
 	// 16-bit little-endian samples — the gateway's pcm_s16le. No other canonical

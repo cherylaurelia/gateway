@@ -111,6 +111,16 @@ func (e *TtsOptionError) Error() string {
 	return fmt.Sprintf("provider_options.%s.%s: %s", e.Provider, e.Key, e.Detail)
 }
 
+// VoiceRequiredError is a TTS adapter refusing to open with no voice: the
+// vendor has no default of its own and the catalog names none for it.
+type VoiceRequiredError struct {
+	Provider string
+}
+
+func (e *VoiceRequiredError) Error() string {
+	return fmt.Sprintf("%s requires a voice id: set request.voice, or SPEKO_%s_BYOK_TTS_VOICE for BYOK", e.Provider, strings.ToUpper(e.Provider))
+}
+
 // Option is the dotted name the refusal is about, for error envelopes that
 // name the ask.
 func (e *TtsOptionError) Option() string {

@@ -139,7 +139,7 @@ func (a *Adapter) Open(ctx context.Context, request runtimepkg.AdapterRequest) (
 	}
 	voice := strings.TrimSpace(request.Options.Voice)
 	if voice == "" {
-		return nil, errors.New("inworld tts requires a voice id in request options")
+		return nil, &protocol.VoiceRequiredError{Provider: "inworld"}
 	}
 	credential := request.Plan.Route.Credential
 	if credential == nil || !acceptableCredentialKind(request.Plan.Execution.ProviderRoute, credential.Kind) || strings.TrimSpace(credential.Value) == "" {

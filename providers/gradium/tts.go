@@ -176,7 +176,7 @@ func synthesisVoice(requested, planned string) (string, error) {
 	if voice := strings.TrimSpace(planned); voice != "" {
 		return voice, nil
 	}
-	return "", errors.New("gradium requires a voice id in request options or the session plan")
+	return "", &protocol.VoiceRequiredError{Provider: "gradium"}
 }
 
 // ttsSetup is Gradium's mandatory first frame on /api/speech/tts.
