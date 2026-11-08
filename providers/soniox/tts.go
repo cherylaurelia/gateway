@@ -120,7 +120,7 @@ func (a *TTSAdapter) Open(ctx context.Context, request runtimepkg.AdapterRequest
 	// fields; Soniox answers a missing one with HTTP 400 on an open socket.
 	voice := strings.TrimSpace(request.Options.Voice)
 	if voice == "" {
-		return nil, errors.New("soniox tts requires a voice in request options")
+		return nil, &protocol.VoiceRequiredError{Provider: "soniox"}
 	}
 	language, ok := sonioxPrimaryLanguage(request.Options.Language)
 	if !ok {

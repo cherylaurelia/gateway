@@ -32,7 +32,8 @@ type CatalogEntry struct {
 	// REFUSE to open without a voice — Rime and Gradium among them — and
 	// the local planner has no benchmark board to choose from, so without this a
 	// perfectly good adapter fails at open with a vendor error the operator cannot
-	// act on. Empty means the vendor supplies its own default.
+	// act on. Empty means the adapter picks a voice itself, or refuses at create
+	// with voice_required until the operator names one.
 	DefaultVoice string             `json:"default_voice,omitempty"`
 	Transport    protocol.Transport `json:"transport"`
 	Endpoint     string             `json:"endpoint"`
@@ -70,13 +71,13 @@ var providerCatalog = []CatalogEntry{
 	// The realtime Scribe family, NOT the batch `scribe_v2`: only this id streams
 	// over /v1/speech-to-text/realtime.
 	{Provider: "elevenlabs", Kind: protocol.SessionKindSTT, Adapter: "elevenlabs.stt.v1", DefaultModel: "scribe_v2_realtime", Transport: protocol.TransportWebSocket, Endpoint: "wss://api.elevenlabs.io/v1/speech-to-text/realtime"},
-	{Provider: "elevenlabs", Kind: protocol.SessionKindTTS, Adapter: "elevenlabs.tts.v1", DefaultModel: "eleven_flash_v2_5", Transport: protocol.TransportWebSocket, Endpoint: "wss://api.elevenlabs.io/v1/text-to-speech"},
+	{Provider: "elevenlabs", Kind: protocol.SessionKindTTS, Adapter: "elevenlabs.tts.v1", DefaultModel: "eleven_flash_v2_5", DefaultVoice: "JBFqnCBsd6RMkjVDRZzb", Transport: protocol.TransportWebSocket, Endpoint: "wss://api.elevenlabs.io/v1/text-to-speech"},
 	// v3/v4 stream only on the text-to-dialogue socket, a separate adapter. The
 	// row sits after the text-to-speech one so a bare or `auto` model keeps
 	// resolving to flash; only these model ids select it.
 	{Provider: "elevenlabs", Kind: protocol.SessionKindTTS, Adapter: "elevenlabs.dialogue.v1", DefaultModel: "eleven_v4_turbo", Models: []string{"eleven_v4_turbo", "eleven_v4", "eleven_v3_conversational", "eleven_v3"}, Transport: protocol.TransportWebSocket, Endpoint: "wss://api.elevenlabs.io/v1/text-to-dialogue/stream-input"},
 	{Provider: "cartesia", Kind: protocol.SessionKindSTT, Adapter: "cartesia.stt.v1", DefaultModel: "ink-2", Transport: protocol.TransportWebSocket, Endpoint: "wss://api.cartesia.ai/stt/websocket"},
-	{Provider: "cartesia", Kind: protocol.SessionKindTTS, Adapter: "cartesia.tts.v1", DefaultModel: "sonic-3", Transport: protocol.TransportWebSocket, Endpoint: "wss://api.cartesia.ai/tts/websocket"},
+	{Provider: "cartesia", Kind: protocol.SessionKindTTS, Adapter: "cartesia.tts.v1", DefaultModel: "sonic-3", DefaultVoice: "71a7ad14-091c-4e8e-a314-022ece01c121", Transport: protocol.TransportWebSocket, Endpoint: "wss://api.cartesia.ai/tts/websocket"},
 	// universal-3-6-pro (2026-09-29) shares the socket and parameters and is
 	// listed so discovery shows it; 3.5 Pro stays the default a bare pin gets.
 	{Provider: "assemblyai", Kind: protocol.SessionKindSTT, Adapter: "assemblyai.stt.v1", DefaultModel: "universal-3-5-pro", Models: []string{"universal-3-5-pro", "universal-3-6-pro"}, Transport: protocol.TransportWebSocket, Endpoint: "wss://streaming.assemblyai.com/v3/ws"},

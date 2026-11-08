@@ -225,7 +225,7 @@ func TestCatalogCarriesADefaultVoiceWhereTheVendorDemandsOne(t *testing.T) {
 			voices[entry.Provider] = entry.DefaultVoice
 		}
 	}
-	for _, provider := range []string{"rime", "hume"} {
+	for _, provider := range []string{"rime", "hume", "elevenlabs", "cartesia"} {
 		if voices[provider] == "" {
 			t.Fatalf("%s TTS has no default voice, so a standalone plan cannot open", provider)
 		}

@@ -256,7 +256,7 @@ func validateGenerationOptions(model string, options protocol.RequestOptions, me
 		return errors.New("rime requires a concrete model in the session plan")
 	}
 	if strings.TrimSpace(options.Voice) == "" {
-		return errors.New("rime requires a voice id in request options")
+		return &protocol.VoiceRequiredError{Provider: "rime"}
 	}
 	language := strings.TrimSpace(options.Language)
 	if language == "" {

@@ -128,7 +128,7 @@ func multiContextEndpoint(policy upstream.WebSocketPolicy, rawEndpoint, model st
 	}
 	voiceID := strings.TrimSpace(options.Voice)
 	if voiceID == "" {
-		return "", errors.New("elevenlabs requires a voice id")
+		return "", &protocol.VoiceRequiredError{Provider: "elevenlabs"}
 	}
 	if strings.TrimSpace(model) == "" || model == "auto" {
 		return "", errors.New("elevenlabs requires a concrete model")
