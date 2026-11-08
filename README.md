@@ -234,7 +234,7 @@ is disabled. The exact payloads and trust boundaries are documented in
 | --- | --- | --- |
 | `SPEKO_LOCAL_AUTH_TOKEN` | required | Local API bearer token |
 | `SPEKO_API_KEY` | unset | Enables managed routing, relay, and billing; explicit BYOK remains local |
-| `SPEKO_<PROVIDER>_BYOK_TTS_VOICE` | catalog default | Operator-selected fallback voice; request voice wins |
+| `SPEKO_<PROVIDER>_BYOK_TTS_VOICE` | catalog default | Operator-selected fallback voice; request voice wins. Where the catalog has no default and the vendor requires a voice, create returns 422 `voice_required` until one is set |
 | `SPEKO_TELEMETRY_DISABLED` | `false` | Opts out of telemetry |
 | `SPEKO_SOCKET_PATH` | `/run/speko/runtime.sock` | Absolute Unix socket path |
 | `SPEKO_LOCAL_MAX_SESSION_DURATION` | `24h` | Local BYOK session ceiling |

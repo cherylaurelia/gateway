@@ -147,7 +147,7 @@ func (a *TTSAdapter) Open(ctx context.Context, request runtimepkg.AdapterRequest
 	// unset voice would be a 400 after the socket is already up.
 	voice := strings.TrimSpace(request.Options.Voice)
 	if voice == "" {
-		return nil, errors.New("alibaba tts requires a voice in request options")
+		return nil, &protocol.VoiceRequiredError{Provider: "alibaba"}
 	}
 	credential := request.Plan.Route.Credential
 	if credential == nil || !acceptableCredentialKind(request.Plan.Execution.ProviderRoute, credential.Kind) || strings.TrimSpace(credential.Value) == "" {
