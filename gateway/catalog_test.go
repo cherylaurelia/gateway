@@ -221,11 +221,14 @@ func TestCatalogCarriesADefaultVoiceWhereTheVendorDemandsOne(t *testing.T) {
 	t.Parallel()
 	voices := map[string]string{}
 	for _, entry := range gateway.Catalog() {
+		if entry.Adapter == "elevenlabs.tts.v1" && entry.DefaultVoice == "" {
+			t.Fatal("elevenlabs TTS has no default voice, so a standalone plan cannot open")
+		}
 		if entry.Kind == protocol.SessionKindTTS {
 			voices[entry.Provider] = entry.DefaultVoice
 		}
 	}
-	for _, provider := range []string{"rime", "hume"} {
+	for _, provider := range []string{"rime", "hume", "cartesia"} {
 		if voices[provider] == "" {
 			t.Fatalf("%s TTS has no default voice, so a standalone plan cannot open", provider)
 		}

@@ -1,11 +1,17 @@
 package gateway_test
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/SpekoAI/gateway/protocol"
+	"github.com/SpekoAI/gateway/providers/mock"
+	runtimepkg "github.com/SpekoAI/gateway/runtime"
 )
 
 func ttsRequestBody(providerOptions map[string]map[string]any) map[string]any {
@@ -77,5 +83,33 @@ func TestCreateRefusesATtsOptionTheRoutedModelCannotHonor(t *testing.T) {
 		if call.Request.TTS != nil {
 			t.Fatal("tts options must not ride the control-plane request")
 		}
+	}
+}
+
+type voiceRefusingAdapter struct{ runtimepkg.Adapter }
+
+func (voiceRefusingAdapter) Open(context.Context, runtimepkg.AdapterRequest) (runtimepkg.ProviderStream, error) {
+	return nil, fmt.Errorf("open: %w", &protocol.VoiceRequiredError{Provider: "cartesia"})
+}
+
+func TestCreateNamesTheMissingVoiceInsteadOfABareBadGateway(t *testing.T) {
+	t.Parallel()
+	gatewayServer, plans := newServerWithAdapter(t, voiceRefusingAdapter{mock.NewSTTAdapter("mock.stt.v1")}, 0, 0, 0, 0)
+	httpServer := httptest.NewServer(gatewayServer.Handler())
+	defer httpServer.Close()
+	response := postJSON(t, httpServer.URL+"/v1/sessions", gatewayRequestBody(), "local-token", "voice-required")
+	defer response.Body.Close()
+	var body struct {
+		Error struct {
+			Code    string `json:"code"`
+			Message string `json:"message"`
+		} `json:"error"`
+	}
+	_ = json.NewDecoder(response.Body).Decode(&body)
+	if response.StatusCode != http.StatusUnprocessableEntity || body.Error.Code != "voice_required" || !strings.Contains(body.Error.Message, "SPEKO_CARTESIA_BYOK_TTS_VOICE") {
+		t.Fatalf("create = %d %+v, want 422 voice_required naming the variable", response.StatusCode, body.Error)
+	}
+	if calls := plans.calls(); len(calls) != 1 {
+		t.Fatalf("a refusal the caller must fix asked for %d plans, want 1", len(calls))
 	}
 }

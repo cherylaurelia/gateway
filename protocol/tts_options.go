@@ -138,3 +138,13 @@ func TtsOptionNumber(value any) (float64, bool) {
 func ValidLanguageTag(tag string) bool {
 	return validSttLanguageTag(tag)
 }
+
+// VoiceRequiredError is a TTS adapter refusing to open with no voice: the
+// vendor has no default of its own and the catalog names none for it.
+type VoiceRequiredError struct {
+	Provider string
+}
+
+func (e *VoiceRequiredError) Error() string {
+	return e.Provider + " requires a voice id"
+}

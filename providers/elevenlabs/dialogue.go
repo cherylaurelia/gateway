@@ -141,7 +141,7 @@ func (a *DialogueAdapter) Open(ctx context.Context, request runtimepkg.AdapterRe
 	}
 	voiceID := strings.TrimSpace(request.Options.Voice)
 	if voiceID == "" {
-		return nil, errors.New("elevenlabs dialogue requires a voice id")
+		return nil, &protocol.VoiceRequiredError{Provider: "elevenlabs"}
 	}
 	voiceSettings, err := ttsVoiceSettings(request.Plan.Route.Model, request.Options.TTS.Provider("elevenlabs"))
 	if err != nil {
